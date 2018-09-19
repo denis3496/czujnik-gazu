@@ -3,9 +3,9 @@ Archive member included because of file (symbol)
 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
                               c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o (exit)
 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
-                              ./main.o (__do_clear_bss)
+                              ./MKUART/mkuart.o (__do_clear_bss)
 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(itoa.o)
-                              ./lcd44780.o (itoa)
+                              ./MKUART/mkuart.o (itoa)
 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(ltoa.o)
                               ./lcd44780.o (ltoa)
 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eerd_byte_atmega32.o)
@@ -22,10 +22,16 @@ Common symbol       size              file
 
 dc_0                0x1               ./main.o
 dc_14               0x1               ./main.o
+UART_TxHead         0x1               ./MKUART/mkuart.o
 dc_16               0x1               ./main.o
 STATE               0x1               ./main.o
+UART_TxTail         0x1               ./MKUART/mkuart.o
 halfsec_count       0x1               ./main.o
 OCRxn_val           0x2               ./main.o
+UART_TxBuf          0x10              ./MKUART/mkuart.o
+UART_RxHead         0x1               ./MKUART/mkuart.o
+UART_RxTail         0x1               ./MKUART/mkuart.o
+UART_RxBuf          0x20              ./MKUART/mkuart.o
 
 Memory Configuration
 
@@ -41,6 +47,7 @@ signature        0x00840000         0x00000400         rw !x
 Linker script and memory map
 
 LOAD c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
+LOAD ./MKUART/mkuart.o
 LOAD ./lcd44780.o
 LOAD ./main.o
 LOAD c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
@@ -137,7 +144,7 @@ LOAD c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x5b4
+.text           0x00000000      0x7d6
  *(.vectors)
  .vectors       0x00000000       0x54 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
                 0x00000000                __vectors
@@ -197,20 +204,17 @@ LOAD c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
                 0x00000078                __vector_6
                 0x00000078                __vector_3
                 0x00000078                __vector_11
-                0x00000078                __vector_13
                 0x00000078                __vector_17
                 0x00000078                __vector_19
                 0x00000078                __vector_5
                 0x00000078                __vector_4
                 0x00000078                __vector_9
                 0x00000078                __vector_2
-                0x00000078                __vector_15
                 0x00000078                __vector_8
-                0x00000078                __vector_14
                 0x00000078                __vector_10
-                0x00000078                __vector_16
                 0x00000078                __vector_18
                 0x00000078                __vector_20
+ .text          0x0000007c        0x0 ./MKUART/mkuart.o
  .text          0x0000007c        0x0 ./lcd44780.o
  .text          0x0000007c        0x0 ./main.o
  .text          0x0000007c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
@@ -223,89 +227,118 @@ LOAD c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  .text          0x0000007c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
                 0x0000007c                . = ALIGN (0x2)
  *(.text.*)
+ .text.USART_Init
+                0x0000007c       0x18 ./MKUART/mkuart.o
+                0x0000007c                USART_Init
+ .text.__vector_15
+                0x00000094       0x16 ./MKUART/mkuart.o
+                0x00000094                __vector_15
+ .text.uart_putc
+                0x000000aa       0x24 ./MKUART/mkuart.o
+                0x000000aa                uart_putc
+ .text.uart_puts
+                0x000000ce       0x18 ./MKUART/mkuart.o
+                0x000000ce                uart_puts
+ .text.__vector_14
+                0x000000e6       0x4e ./MKUART/mkuart.o
+                0x000000e6                __vector_14
+ .text.uart_getc
+                0x00000134       0x2a ./MKUART/mkuart.o
+                0x00000134                uart_getc
+ .text.__vector_13
+                0x0000015e       0x42 ./MKUART/mkuart.o
+                0x0000015e                __vector_13
+ .text.uart_putint
+                0x000001a0       0x42 ./MKUART/mkuart.o
+                0x000001a0                uart_putint
  .text.lcd_sendHalf
-                0x0000007c       0x2a ./lcd44780.o
+                0x000001e2       0x2a ./lcd44780.o
  .text._lcd_write_byte
-                0x000000a6       0x2e ./lcd44780.o
-                0x000000a6                _lcd_write_byte
+                0x0000020c       0x2e ./lcd44780.o
+                0x0000020c                _lcd_write_byte
  .text.lcd_write_cmd
-                0x000000d4        0x8 ./lcd44780.o
-                0x000000d4                lcd_write_cmd
+                0x0000023a        0x8 ./lcd44780.o
+                0x0000023a                lcd_write_cmd
  .text.lcd_write_data
-                0x000000dc        0x8 ./lcd44780.o
-                0x000000dc                lcd_write_data
+                0x00000242        0x8 ./lcd44780.o
+                0x00000242                lcd_write_data
  .text.lcd_char
-                0x000000e4       0x12 ./lcd44780.o
-                0x000000e4                lcd_char
- .text.lcd_str  0x000000f6       0x18 ./lcd44780.o
-                0x000000f6                lcd_str
+                0x0000024a       0x12 ./lcd44780.o
+                0x0000024a                lcd_char
+ .text.lcd_str  0x0000025c       0x18 ./lcd44780.o
+                0x0000025c                lcd_str
  .text.lcd_str_P
-                0x0000010e       0x1c ./lcd44780.o
-                0x0000010e                lcd_str_P
+                0x00000274       0x1c ./lcd44780.o
+                0x00000274                lcd_str_P
  .text.lcd_defchar
-                0x0000012a       0x30 ./lcd44780.o
-                0x0000012a                lcd_defchar
+                0x00000290       0x30 ./lcd44780.o
+                0x00000290                lcd_defchar
  .text.lcd_defchar_P
-                0x0000015a       0x40 ./lcd44780.o
-                0x0000015a                lcd_defchar_P
+                0x000002c0       0x40 ./lcd44780.o
+                0x000002c0                lcd_defchar_P
  .text.lcd_locate
-                0x0000019a       0x10 ./lcd44780.o
-                0x0000019a                lcd_locate
- .text.lcd_cls  0x000001aa       0x10 ./lcd44780.o
-                0x000001aa                lcd_cls
+                0x00000300       0x10 ./lcd44780.o
+                0x00000300                lcd_locate
+ .text.lcd_cls  0x00000310       0x10 ./lcd44780.o
+                0x00000310                lcd_cls
  .text.lcd_init
-                0x000001ba       0x88 ./lcd44780.o
-                0x000001ba                lcd_init
+                0x00000320       0x88 ./lcd44780.o
+                0x00000320                lcd_init
  .text.lcd_defchar_E
-                0x00000242       0x40 ./lcd44780.o
-                0x00000242                lcd_defchar_E
+                0x000003a8       0x40 ./lcd44780.o
+                0x000003a8                lcd_defchar_E
  .text.lcd_str_E
-                0x00000282       0x24 ./lcd44780.o
-                0x00000282                lcd_str_E
- .text.lcd_hex  0x000002a6       0x38 ./lcd44780.o
-                0x000002a6                lcd_hex
- .text.lcd_int  0x000002de       0x38 ./lcd44780.o
-                0x000002de                lcd_int
+                0x000003e8       0x24 ./lcd44780.o
+                0x000003e8                lcd_str_E
+ .text.lcd_hex  0x0000040c       0x38 ./lcd44780.o
+                0x0000040c                lcd_hex
+ .text.lcd_int  0x00000444       0x38 ./lcd44780.o
+                0x00000444                lcd_int
  .text.calibrate_dutycycle
-                0x00000316       0x14 ./main.o
-                0x00000316                calibrate_dutycycle
+                0x0000047c       0x14 ./main.o
+                0x0000047c                calibrate_dutycycle
  .text.set_systik
-                0x0000032a        0xe ./main.o
-                0x0000032a                set_systik
+                0x00000490        0xe ./main.o
+                0x00000490                set_systik
  .text.initInterrupt0
-                0x00000338       0x16 ./main.o
-                0x00000338                initInterrupt0
+                0x0000049e       0x16 ./main.o
+                0x0000049e                initInterrupt0
  .text.initInterrupt1
-                0x0000034e       0x26 ./main.o
-                0x0000034e                initInterrupt1
- .text.main     0x00000374       0x2e ./main.o
-                0x00000374                main
+                0x000004b4       0x26 ./main.o
+                0x000004b4                initInterrupt1
+ .text.initADC  0x000004da        0xc ./main.o
+                0x000004da                initADC
+ .text.main     0x000004e6       0x3e ./main.o
+                0x000004e6                main
  .text.__vector_7
-                0x000003a2       0xc8 ./main.o
-                0x000003a2                __vector_7
- .text.libgcc   0x0000046a        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
- .text.libgcc   0x0000046a        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+                0x00000524       0xdc ./main.o
+                0x00000524                __vector_7
+ .text.__vector_16
+                0x00000600       0x8c ./main.o
+                0x00000600                __vector_16
+ .text.libgcc   0x0000068c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .text.libgcc   0x0000068c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
  .text.avr-libc
-                0x0000046a       0x42 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(itoa.o)
-                0x0000046a                itoa
+                0x0000068c       0x42 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(itoa.o)
+                0x0000068c                itoa
  .text.avr-libc
-                0x000004ac       0x68 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(ltoa.o)
-                0x000004ac                ltoa
+                0x000006ce       0x68 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(ltoa.o)
+                0x000006ce                ltoa
  .text.avr-libc
-                0x00000514       0x10 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eerd_byte_atmega32.o)
-                0x00000514                __eerd_byte_m32
+                0x00000736       0x10 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eerd_byte_atmega32.o)
+                0x00000736                __eerd_byte_m32
  .text.avr-libc
-                0x00000524       0x20 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strrev.o)
-                0x00000524                strrev
- .text.libgcc   0x00000544       0x28 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
-                0x00000544                __udivmodhi4
- .text.libgcc   0x0000056c       0x44 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
-                0x0000056c                __udivmodsi4
-                0x000005b0                . = ALIGN (0x2)
+                0x00000746       0x20 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(strrev.o)
+                0x00000746                strrev
+ .text.libgcc   0x00000766       0x28 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
+                0x00000766                __udivmodhi4
+ .text.libgcc   0x0000078e       0x44 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
+                0x0000078e                __udivmodsi4
+                0x000007d2                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x000005b0        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
-                0x000005b0                exit
-                0x000005b0                _exit
+ .fini9         0x000007d2        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+                0x000007d2                exit
+                0x000007d2                _exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -324,14 +357,15 @@ LOAD c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x000005b0        0x4 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .fini0         0x000007d2        0x4 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
  *(.fini0)
-                0x000005b4                _etext = .
+                0x000007d6                _etext = .
 
-.data           0x00800060        0x0 load address 0x000005b4
+.data           0x00800060        0x0 load address 0x000007d6
                 0x00800060                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800060        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
+ .data          0x00800060        0x0 ./MKUART/mkuart.o
  .data          0x00800060        0x0 ./lcd44780.o
  .data          0x00800060        0x0 ./main.o
  .data          0x00800060        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
@@ -350,10 +384,11 @@ LOAD c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
                 0x00800060                _edata = .
                 0x00800060                PROVIDE (__data_end, .)
 
-.bss            0x00800060        0x7
+.bss            0x00800060       0x3b
                 0x00800060                PROVIDE (__bss_start, .)
  *(.bss)
  .bss           0x00800060        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
+ .bss           0x00800060        0x0 ./MKUART/mkuart.o
  .bss           0x00800060        0x0 ./lcd44780.o
  .bss           0x00800060        0x0 ./main.o
  .bss           0x00800060        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
@@ -366,23 +401,30 @@ LOAD c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  .bss           0x00800060        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
  *(.bss*)
  *(COMMON)
- COMMON         0x00800060        0x7 ./main.o
-                0x00800060                dc_0
-                0x00800061                dc_14
-                0x00800062                dc_16
-                0x00800063                STATE
-                0x00800064                halfsec_count
-                0x00800065                OCRxn_val
-                0x00800067                PROVIDE (__bss_end, .)
-                0x000005b4                __data_load_start = LOADADDR (.data)
-                0x000005b4                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x00800060       0x34 ./MKUART/mkuart.o
+                0x00800060                UART_TxHead
+                0x00800061                UART_TxTail
+                0x00800062                UART_TxBuf
+                0x00800072                UART_RxHead
+                0x00800073                UART_RxTail
+                0x00800074                UART_RxBuf
+ COMMON         0x00800094        0x7 ./main.o
+                0x00800094                dc_0
+                0x00800095                dc_14
+                0x00800096                dc_16
+                0x00800097                STATE
+                0x00800098                halfsec_count
+                0x00800099                OCRxn_val
+                0x0080009b                PROVIDE (__bss_end, .)
+                0x000007d6                __data_load_start = LOADADDR (.data)
+                0x000007d6                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800067        0x0
-                0x00800067                PROVIDE (__noinit_start, .)
+.noinit         0x0080009b        0x0
+                0x0080009b                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x00800067                PROVIDE (__noinit_end, .)
-                0x00800067                _end = .
-                0x00800067                PROVIDE (__heap_start, .)
+                0x0080009b                PROVIDE (__noinit_end, .)
+                0x0080009b                _end = .
+                0x0080009b                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)

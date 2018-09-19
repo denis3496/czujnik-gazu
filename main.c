@@ -12,6 +12,7 @@
 #include <avr/pgmspace.h>
 #include <string.h>
 #include "lcd44780.h"
+#include "MKUART/mkuart.h"
 uint8_t halfsec_count;
 #define MEASUREMENT 0
 #define PREHEAT 1
@@ -25,10 +26,10 @@ volatile uint8_t dc_0;
 #define VH_16 1.6
 #define VH_0 0;
 #define PRESCALER 1024
+#define ENABLE (1<<PB4)
+#define ADC0 (1<<PA0)
 
 uint16_t OCRxn_val;
-
-
 
 void calibrate_dutycycle(void)
 {
@@ -61,13 +62,33 @@ void initInterrupt1(void){
 	halfsec_count=0;
 }
 
-ISR(TIMER1_COMPA_vect) //tik co ok. 1 sekunde
+void initADC(void){
+	ADMUX|= (1<<ADLAR);
+	ADCSRA|=(1<<ADEN)|(1<<ADIE)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);
+	DDRA &=~ADC0;
+}
+
+ISR(ADC_vect){
+	lcd_locate(1,1);
+	/*float tmp;
+	tmp = (ADCH*4.65)/255;*/
+	uint8_t tmp= ADCL >>6;
+	uint16_t theTenBitResults= ADCH<<2 | tmp;
+	lcd_int(theTenBitResults);
+//	uint8_t theLowADC = ADCL;
+//	uint16_t theTenBitResults = ADCH<<8 | theLowADC;
+	uart_putint((int)theTenBitResults,10);
+	uart_putc('\r');
+	uart_putc('\n');
+}
+
+ISR(TIMER1_COMPA_vect) //tik co ok. 0.5 SEKUNDY
 {
 	halfsec_count++;
-	  lcd_locate(0,1);
-		  lcd_int(halfsec_count);
+	lcd_locate(0,1);
+	lcd_int(halfsec_count);
 
-	if((halfsec_count==117) && (STATE==IDLE))
+	if((halfsec_count==10) && (STATE==IDLE))
 		{
 			OCR0 =dc_16;// 1,6V
 			halfsec_count=0;
@@ -76,12 +97,15 @@ ISR(TIMER1_COMPA_vect) //tik co ok. 1 sekunde
 
 		}
 	 if((halfsec_count==1) && (STATE== PREHEAT)){
+		PORTB ^= ENABLE;
 		OCR0 =dc_14;// 1,4V
+		if(bit_is_clear(ADMUX,ADSC)) ADCSRA |= (1<<ADSC);
 		halfsec_count=0;
 		STATE=MEASUREMENT;
 		lcd_cls();
 	}
 	 if((halfsec_count==2) && (STATE==MEASUREMENT)){
+		PORTB ^= ENABLE;
 		OCR0=dc_0;
 		halfsec_count=0;
 		STATE=IDLE;
@@ -90,10 +114,14 @@ ISR(TIMER1_COMPA_vect) //tik co ok. 1 sekunde
 }
 
 int main(void){
+	DDRB |= ENABLE;
+	PORTB &=~ENABLE;
+	USART_Init( __UBRR );
 	calibrate_dutycycle();
 	set_systik();
 	initInterrupt0();
 	initInterrupt1();
+	initADC();
 	lcd_init();
 	sei();
 	while(1);
