@@ -28,6 +28,9 @@
 //		Parametry pracy sterownika
 //
 //----------------------------------------------------------------------------------------
+// W PRZYPADKU GDY JEST MAIN.H TRZEBA TO DODAC DO KAZDEJ SZTUCZNIE DODANEJ BIBLIOTEKI TAKIEJ JAK TA !!!
+#include "main.h"
+
 // rozdzielczoœæ wyœwietlacza LCD (wiersze/kolumny)
 #define LCD_ROWS 2		// iloœæ wierszy wyœwietlacza LCD
 #define LCD_COLS 16	// iloœæ kolumn wyœwietlacza LCD

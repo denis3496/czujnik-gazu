@@ -8,6 +8,8 @@
 #ifndef MKUART_H_
 #define MKUART_H_
 
+// W PRZYPADKU GDY JEST MAIN.H TRZEBA TO DODAC DO KAZDEJ SZTUCZNIE DODANEJ BIBLIOTEKI TAKIEJ JAK TA !!!
+#include "main.h"
 
 #define UART_BAUD 9600		// tu definiujemy interesuj¹c¹ nas prêdkoœæ
 #define __UBRR ((F_CPU+UART_BAUD*8UL) / (16UL*UART_BAUD)-1) // obliczamy UBRR dla U2X=0

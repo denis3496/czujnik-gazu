@@ -4,16 +4,25 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../adc.c \
 ../lcd44780.c \
-../main.c 
+../main.c \
+../mkuart.c \
+../pwm.c 
 
 OBJS += \
+./adc.o \
 ./lcd44780.o \
-./main.o 
+./main.o \
+./mkuart.o \
+./pwm.o 
 
 C_DEPS += \
+./adc.d \
 ./lcd44780.d \
-./main.d 
+./main.d \
+./mkuart.d \
+./pwm.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
